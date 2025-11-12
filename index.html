@@ -1,11 +1,130 @@
 <!DOCTYPE html>
 <html lang="de">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Titel</title>
-  </head>
-  <body>
-    Carrot 🤢
-  </body>
+
+<head>
+  <meta charset="utf-8">
+  <title>Kniffel</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+</head>
+
+<body>
+  <div id="content">
+    <div id="playarea">
+      <div id="dicesafearea"></div>
+
+      <div id="dicearea">
+        <div id="dice1" class="dice"></div>
+        <div id="dice2" class="dice"></div>
+        <div id="dice3" class="dice"></div>
+        <div id="dice4" class="dice"></div>
+        <div id="dice5" class="dice"></div>
+      </div>
+      <hr>
+
+      <button id="throwBtn" role="button" class="golden-button">
+        <span class="golden-text">Würfeln (<span id="throws">0</span>/3)</span>
+      </button>
+
+    </div>
+    <div id="scoresheet">
+
+      <table>
+        <tr>
+          <th></th>
+          <th></th>
+          <th>Spieler 1</th>
+        </tr>
+        <tr>
+          <td>1er</td>
+          <td>nur Einser</td>
+          <td class="combo">-</td>
+        </tr>
+        <tr style="line-height: 1.3em">
+          <td>2er</td>
+          <td>nur Zweier</td>
+          <td class="combo">-</td>
+        </tr>
+        <tr style="line-height: 0.9em">
+          <td>3er</td>
+          <td>nur Dreier</td>
+          <td class="combo">-</td>
+        </tr>
+        <tr>
+          <td>4er</td>
+          <td>nur Vierer</td>
+          <td class="combo">-</td>
+        </tr>
+        <tr style="line-height: 0.9em">
+          <td>5er</td>
+          <td>nur Fünfer</td>
+          <td class="combo">-</td>
+        </tr>
+        <tr style="line-height: 1.5em">
+          <td>6er</td>
+          <td>nur Sechser</td>
+          <td class="combo">-</td>
+        </tr>
+        <tr style="line-height: 1.5em">
+          <td>Bonus</td>
+          <td>+35 Punkte</td>
+          <td id="bonus">-</td>
+        </tr>
+        <tr>
+          <td>3er Pasch</td>
+          <td>alle Augen</td>
+          <td class="combo">-</td>
+        </tr>
+        <tr style="line-height: 1.4em">
+          <td>4er Pasch</td>
+          <td>alle Augen</td>
+          <td class="combo">-</td>
+        </tr>
+        <td>Full House</td>
+        <td>25 Punkte</td>
+        <td class="combo">-</td>
+        </tr>
+        <tr style="line-height: 1.5em">
+          <td>kl. Straße</td>
+          <td>30 Punkte</td>
+          <td class="combo">-</td>
+        </tr>
+        <tr style="line-height: 1.1em">
+          <td>gr. Straße</td>
+          <td>40 Punkte</td>
+          <td class="combo">-</td>
+        </tr>
+        <tr>
+          <td>Kniffel</td>
+          <td>50 Punkte</td>
+          <td class="combo">-</td>
+        </tr>
+        <tr style="line-height: 0.4em">
+          <td>Chance</td>
+          <td>alle Augen</td>
+          <td class="combo">-</td>
+        </tr>
+        <tr style="line-height: 1.5em">
+          <td>oberer Teil</td>
+          <td><i class="bi bi-arrow-right"></i></td>
+          <td id="totalUpper">-</td>
+        </tr>
+        <tr style="line-height: 0.6em">
+          <td>unterer Teil</td>
+          <td><i class="bi bi-arrow-right"></i></td>
+          <td id="totalLower">-</td>
+        </tr>
+        <tr>
+          <td>Gesamt</td>
+          <td><i class="bi bi-arrow-right"></i></td>
+          <td id="total">-</td>
+        </tr>
+      </table>
+
+    </div>
+  </div>
+</body>
+
+<script src="dice.js"></script>
+
 </html>
