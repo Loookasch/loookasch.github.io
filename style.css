@@ -50,7 +50,7 @@ table td:nth-of-type(2) {
   font-family: handwritten;
   line-height: 1rem;
   box-sizing: border-box;
-  background-image: url("block.svg");
+  background-image: url("block.png");
   height: 500px;
   aspect-ratio: 1 / 1;
   padding-top: 85px;
@@ -90,32 +90,32 @@ table td:nth-of-type(2) {
   position: absolute;
   height: 40px;
   width: 40px;
-  background-image: url(/wuerfel.svg);
+  background-image: url(/wuerfel.png);
   background-size: 100% 100%;
 }
 
 .dice[data-value="1"] {
-  background-image: url(/wuerfel1.svg);
+  background-image: url(/wuerfel1.png);
 }
 
 .dice[data-value="2"] {
-  background-image: url(/wuerfel2.svg);
+  background-image: url(/wuerfel2.png);
 }
 
 .dice[data-value="3"] {
-  background-image: url(/wuerfel3.svg);
+  background-image: url(/wuerfel3.png);
 }
 
 .dice[data-value="4"] {
-  background-image: url(/wuerfel4.svg);
+  background-image: url(/wuerfel4.png);
 }
 
 .dice[data-value="5"] {
-  background-image: url(/wuerfel5.svg);
+  background-image: url(/wuerfel5.png);
 }
 
 .dice[data-value="6"] {
-  background-image: url(/wuerfel6.svg);
+  background-image: url(/wuerfel6.png);
 }
 
 .dice.lockedDice {
