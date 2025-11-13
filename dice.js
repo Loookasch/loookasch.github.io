@@ -29,7 +29,7 @@ class diceGame {
     }
 
     throwDice() {
-        if (this.throws >= 3) return alert("cant throw again")
+        if (this.throws >= 3) return alert("Na Na Na, du kannst nicht nochmal würfeln 😭")
         this.throws++;
         this.dice = this.dice.map((x, i) => { return !this.diceLock[i] ? Math.ceil(Math.random() * 6) : x });
 
@@ -49,9 +49,7 @@ class diceGame {
     calculateCombo() {
         const counts = Array(6).fill(0);
 
-        this.dice.forEach(num => {
-            counts[num - 1]++;
-        });
+        this.dice.forEach(num => { counts[num - 1]++; });
 
         const straight = [...new Set(this.dice)].sort().join("")
         const sum = this.dice.reduce((sum, num) => sum + num, 0)
@@ -78,33 +76,29 @@ class diceGame {
 
     updateDicePositions() {
 
-        function shuffle(array) {
-            array.sort(() => Math.random() - 0.5);
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
         }
-        let randXPositions = [0.16, 0.33, 0.5, 0.66, 0.83];
-        let randYPositions = [0.16, 0.33, 0.5, 0.66, 0.83];
+
+        const randXPositions = shuffleArray([0.16, 0.33, 0.5, 0.66, 0.83]);
+        const randYPositions = shuffleArray([0.16, 0.33, 0.5, 0.66, 0.83]);
 
         const dicearea = Id("dicearea")
-        const containerWidth = dicearea.clientWidth;
-        const containerHeight = dicearea.clientHeight;
 
         this.dice.forEach((val, i) => {
             const currentDice = Id("dice" + (i + 1))
             if (!currentDice.classList.contains("lockedDice")) {
-
-                const itemWidth = currentDice.offsetWidth;
-                const itemHeight = currentDice.offsetHeight;
-                const randomX = randXPositions.splice(Math.floor(Math.random() * randXPositions.length), 1)[0] * (containerWidth - itemWidth);
-                const randomY = randYPositions.splice(Math.floor(Math.random() * randYPositions.length), 1)[0] * (containerHeight - itemHeight);
-                currentDice.style.left = `${randomX}px`;
-                currentDice.style.top = `${randomY}px`;
-                const angle = Math.random() * 360;
-                currentDice.style.transform = `rotate(${angle}deg)`;
+                currentDice.style.left = (randXPositions.pop() * (dicearea.clientWidth - currentDice.offsetWidth)) + "px";
+                currentDice.style.top = (randYPositions.pop() * (dicearea.clientHeight - currentDice.offsetHeight)) + "px";
+                currentDice.style.transform = "rotate(" + (Math.random() * 360) + "deg)";
             } else {
-                currentDice.style.top = "-88px";
-                currentDice.style.transform = `rotate(0deg)`;
-                const rand = (i * 45) + 5
-                currentDice.style.left = `${rand}px`;
+                currentDice.style.top = "-79px";
+                currentDice.style.transform = "rotate(0deg)";
+                currentDice.style.left = ((i * 45) + 5) + "px";
             }
         });
     }
@@ -119,16 +113,22 @@ class diceGame {
         });
         Id("throws").innerHTML = this.throws
 
-        document.querySelectorAll(".combo").forEach((cell, i) => { cell.innerHTML = this.points[i] !== undefined ? this.points[i] : "leer" });
-        Id("bonus").innerHTML = this.points.slice(0, 6).reduce((sum, num) => sum + (Number(num) || 0), 0)
+        document.querySelectorAll(".combo").forEach((cell, i) => { 
+            cell.innerHTML = this.points[i] !== undefined ? this.points[i] : "(" +this.currentComboValues[i] + ")";
+        });
+        const bonus = this.points.slice(0, 6).reduce((sum, num) => sum + (Number(num) || 0), 0) >= 63 ? 35 : 0;
+        const totalUpper  = this.points.slice(0, 6).reduce((sum, num) => sum + (Number(num) || 0), 0) + bonus;
+        const totalLower  = this.points.slice(6).reduce((sum, num) => sum + (Number(num) || 0), 0);
+        Id("bonus").innerHTML = bonus
+        Id("totalUpper").innerHTML = totalUpper;
+        Id("totalLower").innerHTML = totalLower;
+        Id("total").innerHTML = totalUpper + totalLower;
     }
 }
 
 const game = new diceGame;
 
-Id("throwBtn").addEventListener("click", () => {
-    game.throwDice();
-})
+Id("throwBtn").addEventListener("click", () => { game.throwDice() })
 
 Id("dice1").addEventListener("click", () => { game.toggleDiceLock(1) })
 Id("dice2").addEventListener("click", () => { game.toggleDiceLock(2) })
