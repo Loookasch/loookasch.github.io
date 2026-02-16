@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Strafen SG</title>
+  <style>
+    body {
+      font-family: Helvetica,Tahoma, Geneva, Verdana, sans-serif;
+      padding: 0;
+      margin: 10px;
+      width: 100vw;
+    }
+
+    table {
+      border-collapse: collapse;
+      text-wrap: nowrap;
+      margin: auto;
+    }
+
+    th,
+    td {
+      border-top: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #073763;
+      writing-mode: vertical-lr;
+      text-orientation: mixed;
+      text-align: end;
+      padding: 10px 0;
+      color: white;
+      font-size: 0.75rem;
+    }
+
+    /* Name */
+    td:nth-child(1) {
+      text-align: end;
+      font-weight: bold;
+    }
+
+    /* Startkiste */
+    td:nth-child(2) {
+      text-align: center;
+      color: green;
+      font-weight: bold;
+      width: 25px;
+    }
+
+    td:nth-child(n+3) {
+      padding: 2px 5px;
+      color: gainsboro;
+      text-align: center;
+      font-size: 0.75rem;
+    }
+
+    .highlight {
+      color: black !important;
+      font-weight: bold;
+      font-size: 1rem !important;
+    }
+
+    td[data-tooltip] {
+      position: relative;
+    }
+
+    td[data-tooltip]:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #333;
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 4px;
+      white-space: nowrap;
+      font-size: 12px;
+      z-index: 10;
+    }
+
+    td:nth-child(n+2) {
+      border-right: 1px solid #ddd;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="table-container"></div>
+  <script src="strafen.js"></script>
+</body>
+
+</html>

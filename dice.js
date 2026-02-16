@@ -1,149 +1,121 @@
-console.log("Hello World :)")
+console.log("Hello World :) V2")
 
-const Id = (id) => { return document.getElementById(id); };
+const Id = (id) => { return document.getElementById(id) };
 
-class diceGame {
-    constructor(numOfPlayers) {
-        this.numOfPlayers = 2;
-        this.dice = [0, 0, 0, 0, 0];
-        this.diceLock = [0, 0, 0, 0, 0];
-        this.currentComboValues = Array(13).fill(0)
-        this.points = [
-            undefined, // 0     1er
-            undefined, // 1     2er
-            undefined, // 2     3er
-            undefined, // 3     4er
-            undefined, // 4     5er
-            undefined, // 5     6er
-            undefined, // 6     3er Pasch
-            undefined, // 7     4er Pasch
-            undefined, // 8     Full House
-            undefined, // 9     kl Str
-            undefined, // 10    gr Str
-            undefined, // 11    Kniffel
-            undefined  // 12    Chance
-        ]
-        this.throws = 0;
-        this.audioThrow = new Audio('sound_dice_roll.mp3');
-        this.throwDice();
+const Sum = arr => arr.reduce((a, b) => a + b, 0);
+const Count = arr => {
+    const counts = Array(Math.max(...arr)).fill(0);
+    arr.forEach(num => { counts[num - 1]++ });
+    return counts;
+}
+
+class DieD6 {
+    value = undefined;
+    locked = false;
+
+    reroll = () => this.value = Math.ceil(Math.random() * 6);
+    getValue = () => this.value;
+
+    lock = () => this.locked = true;
+    unlock = () => this.locked = false;
+}
+
+class ClassicGame {
+    constructor(amount = 5) {
+        this.dice = Array.from({ length: amount }, () => new DieD6());
     }
 
-    throwDice() {
-        if (this.throws >= 3) return alert("Na Na Na, du kannst nicht nochmal würfeln 😭")
-        this.throws++;
-        this.dice = this.dice.map((x, i) => { return !this.diceLock[i] ? Math.ceil(Math.random() * 6) : x });
+    rerollAll = () => this.dice.forEach(die => { if (!die.locked) die.reroll() });
 
-        this.calculateCombo();
-        console.log("Werte:", this.currentComboValues)
-        this.updateTable();
-        this.audioThrow.play()
-        this.updateDicePositions()
+    getValues = () => { return this.dice.map(die => die.getValue()) }
 
-    }
+    lock = (index) => this.dice[index]?.lock();
 
-    toggleDiceLock(i) {
-        this.diceLock[i - 1] = 1 - this.diceLock[i - 1];
-        this.updateTable()
-    }
+    unlock = (index) => this.dice[index]?.unlock();
 
-    calculateCombo() {
-        const counts = Array(6).fill(0);
+}
 
-        this.dice.forEach(num => { counts[num - 1]++; });
+class Combo {
+    comboName = undefined;
+    howToScore = undefined;
+    score = () => { throw new Error("must overwrite this!") }
+}
 
-        const straight = [...new Set(this.dice)].sort().join("")
-        const sum = this.dice.reduce((sum, num) => sum + num, 0)
+class ComboOnes extends Combo {
+    comboName = "1er";
+    howToScore = "nur Einser zählen";
+    score = (values) => { return Sum(values.filter((value) => value === 1)) }
+}
 
-        this.currentComboValues = [
-            counts[0] * 1, counts[1] * 2, counts[2] * 3, counts[3] * 4, counts[4] * 5, counts[5] * 6,
-            counts.some(num => num >= 3) ? sum : 0,
-            counts.some(num => num >= 4) ? sum : 0,
-            (counts.some(num => num == 2) && counts.some(num => num == 3)) ? 25 : 0,
-            (straight.includes("1234") || straight.includes("2345") || straight.includes("3456")) ? 30 : 0,
-            (straight.includes("12345") || straight.includes("23456")) ? 40 : 0,
-            counts.some(num => num == 5) ? 50 : 0,
-            sum
-        ]
-    }
+class ComboTwos extends Combo {
+    comboName = "2er";
+    howToScore = "nur Zweier zählen";
+    score = (values) => { return Sum(values.filter((value) => value === 2)) }
+}
 
-    setValue(i) {
-        this.points[i] = this.currentComboValues[i]
-        console.log("Punkte:", this.points)
-        this.diceLock = this.diceLock.fill(0);
-        this.throws = 0;
-        this.throwDice();
-    }
+class ComboThrees extends Combo {
+    comboName = "3er";
+    howToScore = "nur Dreier zählen";
+    score = (values) => { return Sum(values.filter((value) => value === 3)) }
+}
 
-    updateDicePositions() {
+class ComboFours extends Combo {
+    comboName = "4er";
+    howToScore = "nur Vierer zählen";
+    score = (values) => { return Sum(values.filter((value) => value === 4)) }
+}
 
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
+class ComboFives extends Combo {
+    comboName = "5er";
+    howToScore = "nur Fünfer zählen";
+    score = (values) => { return Sum(values.filter((value) => value === 5)) }
+}
 
-        const randXPositions = shuffleArray([0.16, 0.33, 0.5, 0.66, 0.83]);
-        const randYPositions = shuffleArray([0.16, 0.33, 0.5, 0.66, 0.83]);
+class ComboSixes extends Combo {
+    comboName = "6er";
+    howToScore = "nur Sechser zählen";
+    score = (values) => { return Sum(values.filter((value) => value === 6)) }
+}
 
-        const dicearea = Id("dicearea")
+class ComboThreeOfAKind extends Combo {
+    comboName = "Dreierpasch";
+    howToScore = "alle Augen zählen";
+    score = (values) => { return Count(values).some(num => num >= 3) ? Sum(values) : 0 }
+}
 
-        this.dice.forEach((val, i) => {
-            const currentDice = Id("dice" + (i + 1))
-            if (!currentDice.classList.contains("lockedDice")) {
-                currentDice.style.left = (randXPositions.pop() * (dicearea.clientWidth - currentDice.offsetWidth)) + "px";
-                currentDice.style.top = (randYPositions.pop() * (dicearea.clientHeight - currentDice.offsetHeight)) + "px";
-                currentDice.style.transform = "rotate(" + (Math.random() * 360) + "deg)";
-            } else {
-                currentDice.style.top = "-79px";
-                currentDice.style.transform = "rotate(0deg)";
-                currentDice.style.left = ((i * 45) + 5) + "px";
-            }
-        });
-    }
+class ComboFourOfAKind extends Combo {
+    comboName = "Dreierpasch";
+    howToScore = "alle Augen zählen";
+    score = (values) => { return Count(values).some(num => num >= 4) ? Sum(values) : 0 }
+}
 
-    updateTable() {
-
-        this.dice.forEach((val, i) => {
-            const currentDice = Id("dice" + (i + 1))
-
-            currentDice.dataset.value = val;
-            currentDice.classList.toggle("lockedDice", this.diceLock[i]);
-        });
-        Id("throws").innerHTML = this.throws
-
-        document.querySelectorAll(".combo").forEach((cell, i) => { 
-            cell.innerHTML = this.points[i] !== undefined ? this.points[i] : "(" +this.currentComboValues[i] + ")";
-        });
-        const bonus = this.points.slice(0, 6).reduce((sum, num) => sum + (Number(num) || 0), 0) >= 63 ? 35 : 0;
-        const totalUpper  = this.points.slice(0, 6).reduce((sum, num) => sum + (Number(num) || 0), 0) + bonus;
-        const totalLower  = this.points.slice(6).reduce((sum, num) => sum + (Number(num) || 0), 0);
-        Id("bonus").innerHTML = bonus
-        Id("totalUpper").innerHTML = totalUpper;
-        Id("totalLower").innerHTML = totalLower;
-        Id("total").innerHTML = totalUpper + totalLower;
+class ComboFullHouse extends Combo {
+    comboName = "Full House";
+    howToScore = "25 Punkte";
+    score = (values) => {
+        const counts = Count(values)
+        return (counts.includes(2) && counts.includes(3)) ? 25 : 0
     }
 }
 
-const game = new diceGame;
+const dice = new ClassicGame(5);
 
-Id("throwBtn").addEventListener("click", () => { game.throwDice() })
+dice.rerollAll();          // würfelt alle
+console.log(dice.getValues());
 
-Id("dice1").addEventListener("click", () => { game.toggleDiceLock(1) })
-Id("dice2").addEventListener("click", () => { game.toggleDiceLock(2) })
-Id("dice3").addEventListener("click", () => { game.toggleDiceLock(3) })
-Id("dice4").addEventListener("click", () => { game.toggleDiceLock(4) })
-Id("dice5").addEventListener("click", () => { game.toggleDiceLock(5) })
+// z.B. Würfel 0 locken
+dice.lock(0);
 
-const cells = document.querySelectorAll(".combo");
-cells.forEach((cell, i) => {
-    cell.addEventListener("click", () => {
-        if (!cell.classList.contains("lockedCombo")) {
-            cell.classList.toggle("lockedCombo");
-            game.setValue(i)
-        } else {
-            alert("Das geht nicht mehr 😭")
-        }
-    });
-});
+// nochmal würfeln → Würfel 0 bleibt gleich
+dice.rerollAll();
+console.log(dice.getValues());
+
+console.log((new ComboOnes()).score(dice.getValues()))
+console.log((new ComboTwos()).score(dice.getValues()))
+console.log((new ComboThrees()).score(dice.getValues()))
+console.log((new ComboFours()).score(dice.getValues()))
+console.log((new ComboFives()).score(dice.getValues()))
+console.log((new ComboSixes()).score(dice.getValues()))
+console.log((new ComboThreeOfAKind()).score(dice.getValues()))
+console.log((new ComboFourOfAKind()).score(dice.getValues()))
+console.log((new ComboFullHouse()).score(dice.getValues()))
